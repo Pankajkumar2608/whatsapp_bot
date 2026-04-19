@@ -23,9 +23,9 @@ app.post('/webhook', handleIncoming);
 
 // ── Start ──
 app.listen(config.port, () => {
-  logger.info(`🚀 WhatsApp Lead Bot running on port ${config.port}`);
-  logger.info(`   Environment: ${config.nodeEnv}`);
-  logger.info(`   WA Phone ID: ${config.wa.phoneNumberId}`);
+  logger.info(`WhatsApp Lead Bot running on port ${config.port}`);
+  logger.info(`Environment: ${config.nodeEnv}`);
+  logger.info(`WA Phone ID: ${config.wa.phoneNumberId}`);
 });
 
 module.exports = app;

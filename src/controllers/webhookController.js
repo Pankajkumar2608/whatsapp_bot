@@ -24,12 +24,25 @@ function verifyWebhook(req, res) {
   const token = req.query['hub.verify_token'];
   const challenge = req.query['hub.challenge'];
 
+  logger.info('Webhook verify attempt', {
+    mode,
+    receivedToken: token,
+    expectedToken: config.wa.verifyToken,
+    match: token === config.wa.verifyToken,
+  });
+
   if (mode === 'subscribe' && token === config.wa.verifyToken) {
     logger.info('Webhook verified successfully');
     return res.status(200).send(challenge);
   }
 
-  logger.warn('Webhook verification failed', { mode, token });
+  logger.warn('Webhook verification FAILED', {
+    mode,
+    receivedToken: token,
+    expectedToken: config.wa.verifyToken,
+    tokenLength: token?.length,
+    expectedLength: config.wa.verifyToken?.length,
+  });
   return res.sendStatus(403);
 }
 
