@@ -20,18 +20,18 @@ const { detectLanguage } = require('../utils/languageDetector');
  * GET /webhook — Meta verification challenge.
  */
 function verifyWebhook(req, res) {
-  // Express 5 parses dots as nested objects: hub.mode → req.query.hub.mode
-  // Support both flat and nested formats for safety
-  const mode = req.query['hub.mode'] || req.query?.hub?.mode;
-  const token = req.query['hub.verify_token'] || req.query?.hub?.verify_token;
-  const challenge = req.query['hub.challenge'] || req.query?.hub?.challenge;
+  // Express 5 can break dot-notation query params — parse manually as fallback
+  const url = new URL(req.originalUrl, `http://${req.headers.host}`);
+  const mode = req.query['hub.mode'] || req.query?.hub?.mode || url.searchParams.get('hub.mode');
+  const token = req.query['hub.verify_token'] || req.query?.hub?.verify_token || url.searchParams.get('hub.verify_token');
+  const challenge = req.query['hub.challenge'] || req.query?.hub?.challenge || url.searchParams.get('hub.challenge');
 
   logger.info('Webhook verify attempt', {
     mode,
     receivedToken: token,
     expectedToken: config.wa.verifyToken,
     match: token === config.wa.verifyToken,
-    rawQuery: JSON.stringify(req.query),
+    rawUrl: req.originalUrl,
   });
 
   if (mode === 'subscribe' && token === config.wa.verifyToken) {

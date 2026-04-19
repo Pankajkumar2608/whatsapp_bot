@@ -10,6 +10,7 @@ const { verifyWebhook, handleIncoming } = require('./controllers/webhookControll
 const app = express();
 
 // ── Middleware ──
+app.set('query parser', 'simple');  // Force simple query parser (Node's querystring)
 app.use(express.json());
 
 // Health check
