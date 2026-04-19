@@ -20,15 +20,18 @@ const { detectLanguage } = require('../utils/languageDetector');
  * GET /webhook — Meta verification challenge.
  */
 function verifyWebhook(req, res) {
-  const mode = req.query['hub.mode'];
-  const token = req.query['hub.verify_token'];
-  const challenge = req.query['hub.challenge'];
+  // Express 5 parses dots as nested objects: hub.mode → req.query.hub.mode
+  // Support both flat and nested formats for safety
+  const mode = req.query['hub.mode'] || req.query?.hub?.mode;
+  const token = req.query['hub.verify_token'] || req.query?.hub?.verify_token;
+  const challenge = req.query['hub.challenge'] || req.query?.hub?.challenge;
 
   logger.info('Webhook verify attempt', {
     mode,
     receivedToken: token,
     expectedToken: config.wa.verifyToken,
     match: token === config.wa.verifyToken,
+    rawQuery: JSON.stringify(req.query),
   });
 
   if (mode === 'subscribe' && token === config.wa.verifyToken) {
@@ -40,8 +43,6 @@ function verifyWebhook(req, res) {
     mode,
     receivedToken: token,
     expectedToken: config.wa.verifyToken,
-    tokenLength: token?.length,
-    expectedLength: config.wa.verifyToken?.length,
   });
   return res.sendStatus(403);
 }
