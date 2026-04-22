@@ -170,8 +170,10 @@ async function processMessage({ from, text, messageId, timestamp, metadata }) {
     return; // ← bot stops here permanently
   }
 
-  // ── 14. Send reply ──
-  await WhatsAppService.sendMessage(from, reply);
+  // ── 14. Send reply ──   (added delay to make it more human like ig it will human like it)
+  setTimeout(() => {
+    await WhatsAppService.sendMessage(from, reply);
+  },3000)
 
   // ── 15. Save outbound message ──
   await MemoryService.saveMessage(user.user_id, 'outbound', reply);
