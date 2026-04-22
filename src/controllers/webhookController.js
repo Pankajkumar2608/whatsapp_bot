@@ -171,9 +171,9 @@ async function processMessage({ from, text, messageId, timestamp, metadata }) {
   }
 
   // ── 14. Send reply ──   (added delay to make it more human like ig it will human like it)
-  setTimeout(() => {
-    await WhatsAppService.sendMessage(from, reply);
-  },3000)
+  setTimeout(async () => {
+  await WhatsAppService.sendMessage(from, reply);
+}, 10000);
 
   // ── 15. Save outbound message ──
   await MemoryService.saveMessage(user.user_id, 'outbound', reply);
